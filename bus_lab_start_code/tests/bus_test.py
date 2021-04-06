@@ -6,6 +6,7 @@ from src.person import Person
 class TestBus(unittest.TestCase):
     def setUp(self):
         self.bus = Bus(22, "Ocean Terminal")
+        self.bus_1 = Bus(44, "Waverly Station")
 
     #@unittest.skip("Delete this line to run the test")
     def test_has_route_number(self):
@@ -45,12 +46,24 @@ class TestBus(unittest.TestCase):
         self.bus.empty()
         self.assertEqual(0, self.bus.passenger_count())
 
+    def test_destination_match(self):
+        person = Person("Steven Cormack", 25, "Hell")
+        bus_stop = BusStop("Inverness")
+        bus_stop.add_to_queue(person)
+        self.bus.pick_up_from_stop(bus_stop)
+        self.assertTrue(bus_stop.queue_length() == 1)
+
     #@unittest.skip("Delete this line to run the test")
     def test_can_pick_up_passenger_from_bus_stop(self):
         person_1 = Person("Guido van Rossum", 64, "Waverly Station")
-        person_2 = Person("Carol Willing", 50, "Waverly Station")
-        bus_stop = BusStop("Waverly Station")
+        person_2 = Person("Carol Willing", 50, "Ocean Terminal")
+        bus_stop = BusStop("Haymarket")
         bus_stop.add_to_queue(person_1)
         bus_stop.add_to_queue(person_2)
         self.bus.pick_up_from_stop(bus_stop)
-        self.assertEqual(2, self.bus.passenger_count())
+        self.assertEqual(1, self.bus.passenger_count())
+        self.assertEqual(1, bus_stop.queue_length())
+        
+        self.bus_1.pick_up_from_stop(bus_stop)
+        self.assertEqual(1, self.bus_1.passenger_count())
+        self.assertEqual(0, bus_stop.queue_length())
